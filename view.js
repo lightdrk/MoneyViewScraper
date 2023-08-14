@@ -50,7 +50,8 @@ const puppeteer = require('puppeteer');
     });
     if (next){
       await page.waitForSelector('input[name="Passwd"]');
-      await page.type('input[name="Passwd"]','Developer.Mohitrawat@gmail.com');
+      //password here for google
+      await page.type('input[name="Passwd"]','***');
       const logged = await page.evaluate(()=>{
         var next_button = document.getElementsByClassName('VfPpkd-vQzf8d');
         for (let next of next_button){
