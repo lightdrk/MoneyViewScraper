@@ -37,7 +37,7 @@ const puppeteer = require('puppeteer');
     ]);
   
     await page.waitForSelector('input[name="identifier"]');
-    await page.type('input[name="identifier"]','developer.mohitawat@gmail.com');
+    await page.type('input[name="identifier"]','***');
     const next = await page.evaluate(()=>{
       var next_button = document.getElementsByClassName('VfPpkd-vQzf8d');
       for (let next of next_button){
