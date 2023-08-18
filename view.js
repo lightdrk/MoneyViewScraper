@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const keypress = require('keypress');
 const {exec} = require('child_process');
 const prompt = require('prompt-sync')();
-
+const readList = require('./read');
 
 
 keypress(process.stdin);
@@ -53,7 +53,7 @@ process.stdin.resume();
     if (page){
 	await page.bringToFront();
     	await page.waitForSelector('input[id="identifierId"]');
-    	await page.type('input[id="identifierId"]','**');//gmailId here replace with **
+    	await page.type('input[id="identifierId"]','developer.mohitawat@gmail.com');
     	const next = await page.evaluate(()=>{
       	var next_button = document.getElementsByClassName('VfPpkd-vQzf8d');
      	 for (let nxt of next_button){
@@ -68,7 +68,7 @@ process.stdin.resume();
 //    here password is typed in for the login. in google
         if (next){
       		await page.waitForSelector('input[name="Passwd"]');
-      		await page.type('input[name="Passwd"]','**');//gmailId password **
+      		await page.type('input[name="Passwd"]','Developer.Mohitrawat@gmail.com');
       		const logged = await page.evaluate(()=>{
         		var next_button = document.getElementsByClassName('VfPpkd-vQzf8d');
         		for (let next of next_button){
@@ -102,7 +102,7 @@ process.stdin.resume();
   console.log('page__url: -',url);
   var search_url = url.slice(0,url.indexOf('=')+1);
  // let tabs = await browser.pages()l
-  let stock_list = ['sobha','mohitind','m_m','tatamotors','reliance','hdfcbank'];//stock to search for
+  let stock_list = readList();
   let move = 0;
   let add = 0;
   let input;
