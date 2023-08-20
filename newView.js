@@ -89,7 +89,7 @@ process.stdin.resume();
 			 
 		  }
 		  pages = await browser.pages();
-		  while(pages.length> numberOfPages){
+		  while(pages.length>= numberOfPages){
 			  pages = await browser.pages();
 			  try{
 				   await pages[0].close();
