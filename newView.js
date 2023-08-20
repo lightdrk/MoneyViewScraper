@@ -4,7 +4,7 @@ const {exec} = require('child_process');
 const prompt = require('prompt-sync')();
 const readList = require('./read');
 
-
+let numberOfPages = 4;
 keypress(process.stdin);
 process.stdin.setRawMode(true);
 process.stdin.resume();
@@ -61,7 +61,6 @@ process.stdin.resume();
   let input;
   process.stdin.on('keypress',async (ch,key)=>{
 	  pages = await browser.pages();
-	  await console.log(await pages[1].title());
 	  if(key && key.name === 'right'){
 		  move++; 
 		  if (pages.length <= move){
@@ -76,17 +75,28 @@ process.stdin.resume();
 		  await pages[move].bringToFront();
 		  //tab move to left
 	  }else if(key && key.name === 'up'){
-		  add ++;
-		  if (add >= stock_list.length){
-			  console.log('nothing to add..');
-			  add = stock_list.length;
-		 }else{
-			 page = await browser.newPage();
-			 await page.goto(search_url+stock_list[add]);
-		 } 
-		 if (pages.length > 10){
-			 await pages[0].close();
-		 }		 
+		  for (let n = 0;n<5;n++){
+			 add++;
+			 if (add >= stock_list.length){
+				  console.log('nothing to add..');
+				  add = stock_list.length;
+			 }else{
+				 page = await browser.newPage();
+				 await page.goto(search_url+stock_list[add]);
+				 await console.log(`${stock_list[add]}:`,await page.title());
+			 }
+			 
+		  }
+		  pages = await browser.pages();
+		  while(pages.length> numberOfPages){
+			  pages = await browser.pages();
+			  try{
+				   await pages[0].close();
+			 }catch (err){
+				 console.log(err);
+		 	 }
+		 }
+		  
 		  //add new tabs and remvoe same number of tab
 	  }else if (key && key.ctrl && key.name === 'o'){
 		  let name_of_stock = prompt('>');
