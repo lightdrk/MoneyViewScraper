@@ -5,6 +5,7 @@ const prompt = require('prompt-sync')();
 const readList = require('./read');
 
 let numberOfPages = 4;
+let openNumberOfPages = 5;
 keypress(process.stdin);
 process.stdin.setRawMode(true);
 process.stdin.resume();
@@ -75,7 +76,7 @@ process.stdin.resume();
 		  await pages[move].bringToFront();
 		  //tab move to left
 	  }else if(key && key.name === 'up'){
-		  for (let n = 0;n<5;n++){
+		  for (let n = 0;n<openNumberOfPages;n++){
 			 add++;
 			 if (add >= stock_list.length){
 				  console.log('nothing to add..');
