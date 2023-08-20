@@ -29,7 +29,6 @@ process.stdin.resume();
   });
   //await page.bringToFront();
   while (logged){
-	  console.log('try login manually');
 	  logged = await page.evaluate(async()=>{
 		let sign_button = document.getElementsByClassName('tv-header__area tv-header__area--user');
 		let check = document.getElementsByTagName('h1');
