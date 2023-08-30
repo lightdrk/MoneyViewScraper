@@ -2,6 +2,14 @@ const puppeteer = require('puppeteer');
 const csv = require('csv-parser');
 const fs = require('fs');
 
+let Email = 'sriramgcp12@gmail.com';
+let Pass = 'jan@2022';
+let stock_file = 'STonk.txt';
+
+function read(stock_file){
+	let words = fs.readFileSync(`./${stock_file}`,'utf-8');
+	return words.split('\n');
+}
 
 (async() =>{
 	const browser = await puppeteer.launch({
@@ -19,16 +27,15 @@ const fs = require('fs');
 		const email = await page.$('#emailid');
 		if (email){
 			
-			await email.type('rahapan428@mliok.com');
-			
-			const password = await page.$('#password');
+			await email.type(Email);
+			const  password = await page.$('#password');
 
-			await password.type('rahapan428@mliok.com');
+			await password.type(Pass);
 
 			await page.click('button[class ="btn-block py-2 font-12rem text-white sign-up border-0"]');
 		}
 	}
-	const stock_list = ['Mohit','sobha'];
+	const stock_list = read(stock_file);
 	for (let stock of stock_list){
 	// pop_search box
 		try{	
@@ -114,7 +121,26 @@ const fs = require('fs');
 			}
 			if (!(href)){
 				console.log('not found');
+			}else{
+				await page.waitForNavigation();
+				let checkFor = await page.$('div[class="card-body text-center"]');
+				if (checkFor){
+					let data = await page.evaluate(()=>{
+						let sent_array = [];
+						for (let dataIn of document.querySelectorAll('div[class="card-body text-center"]')){
+							sent_array.push(dataIn.innerText);
+						}
+						return sent_array;
+					});
+					console.log(data);
+					for (let row of data){
+						fs.appendFile('extract.txt',row,'utf-8');
+					}
+				}
+				
 			}
+
+
 		}
 				
 	}
