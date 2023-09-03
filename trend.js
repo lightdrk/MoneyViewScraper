@@ -3,8 +3,8 @@ const progress = require('cli-progress');
 const math = require('math')
 const fs = require('fs');
 
-const email = 'pemoyej714@vreaa.com';
-const password = 'pemoyej714@vreaa.com';
+const email = '';
+const password = '';
 const file = 'STonk.txt';
 const bar1 = new progress.SingleBar({},progress.Presets.shades_classic);
 var stockList= (fs.readFileSync(file,'utf-8')).split('\n');
