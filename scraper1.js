@@ -1,6 +1,9 @@
 const puppeteer = require('puppeteer');
 const csv = require('csv-parser');
 const fs = require('fs');
+const progress = require('cli-progress');
+
+const bar1 = new progress.SingleBar({},progress.Presets.shades_classic);
 
 let Email = 'sriramgcp12@gmail.com';
 let Pass = 'jan@2022';
@@ -9,6 +12,9 @@ let stock_file = 'STonk.txt';
 function read(stock_file){
 	let words = fs.readFileSync(`./${stock_file}`,'utf-8');
 	return words.split('\n');
+}
+function convertToCSV(arr) {
+    return arr.map(row => row.join(',')).join('\n');
 }
 
 (async() =>{
@@ -36,13 +42,22 @@ function read(stock_file){
 		}
 	}
 	const stock_list = read(stock_file);
+	bar1.start(stock_list.length,0);
+	let count = 1;
 	for (let stock of stock_list){
+		count++;
+		bar1.update(count);
 	// pop_search box
+		try{
+			await page.waitForNavigation({timeout: 2000});
+		}catch(error){
+			//console.log(error);\
+		}
 		try{	
-			await page.waitForSelector('#stocksearch-icon',{timeout:5000})
+			await page.waitForSelector('#stocksearch-icon',{timeout:3000})
 			await page.click('#stocksearch-icon');
 		}catch (error){
-			console.log(error);
+		//	console.log(error);
 			await page.click('#header-search-box');
 		}
 		await page.waitForSelector('input#popupsearch');
@@ -54,7 +69,7 @@ function read(stock_file){
 		// this evaluates to href ,else null
 		href = await page.evaluate(async (stock)=>{
 			let arr = await document.getElementsByClassName('list-group-item text-left');
-			console.log(arr);
+		//	console.log(arr);
 			for (let inside of arr){
 				if((inside.innerText).toLowerCase() == stock.toLowerCase()){
 					stock_name = inside.innerText
@@ -63,7 +78,6 @@ function read(stock_file){
 			}
 			return null;
 		},stock)
-		console.log(href);
 		// href 
 		if (href !== null){
 			// selection through href
@@ -79,7 +93,7 @@ function read(stock_file){
 			// alternative is directly searches the stock and nav through their
 
 			let quote_search = await page.waitForSelector('button#quote_search');
-			console.log(await quote_search.isVisible());
+		//	console.log(await quote_search.isVisible());
 			await page.evaluate(()=>{
 				let js = document.getElementById('quote_search');
 				js.click()
@@ -101,21 +115,16 @@ function read(stock_file){
 				return str.innerHTML
 			},stock)
 			for (let li of match.split('<hr>')){
-				console.log('li:',li);
-				console.log(stock_name);
 				//checks for stock name presence
 				if ((li.toLowerCase()).includes(stock_name.toLowerCase())){
 					href = li.slice(li.indexOf('/'),li.lastIndexOf('"'));
-					console.log(href);
 					var href_click = await page.waitForSelector(`a[href="${href}"]`,{visible: true});
 
 					if (!(href_click)){
-						console.log(href);
 						href_click = await page.waitForXPath(`//a[contains(text(),"${stock_name}")]`, {visible: true});
 					}
 					await href_click.click();
 					break;
-					console.log('...............')
 					
 				}
 			}
@@ -128,14 +137,33 @@ function read(stock_file){
 					let data = await page.evaluate(()=>{
 						let sent_array = [];
 						for (let dataIn of document.querySelectorAll('div[class="card-body text-center"]')){
-							sent_array.push(dataIn.innerText);
+							let inside = [];
+							for (let x of dataIn.innerText.split('\n')){
+								if (x == ''|| x==' ' ){
+									continue;
+								}
+								inside.push(x);
+
+							}
+							sent_array.push(inside);
+
 						}
 						return sent_array;
 					});
-					console.log(data);
-					for (let row of data){
-						fs.appendFile('extract.txt',row,'utf-8');
-					}
+					data.unshift(['\n\n----',stock,'-----']);	
+					// Function to convert 2D array to CSV format
+					// Convert your data to CSV format
+					const csvData = convertToCSV(data);
+
+					// Write the CSV data to a text file
+					fs.appendFileSync('data.csv', csvData+'\n\n', 'utf8', (err) => {
+					    if (err) {
+						console.error('Error writing to file:', err);
+					    } else {
+						console.log('Data written to file successfully.');
+					    }
+					})
+
 				}
 				
 			}
@@ -144,20 +172,7 @@ function read(stock_file){
 		}
 				
 	}
+	bar1.stop();
 	
-	// //search button
 	
-	// await search.click();
-	// await page.waitForNavigation();
-	// //produce list of object 
-	// let rating_card = await page.$('.card-body text-center');
-	// console.log(rating_card.innerText);
-	// if (rating_card){
-	// 	for (let value of values){
-	// 		//we can get data like 
-	// 		console.log(value.innerText);
-	// }
-	// }
-
-    
 })();
