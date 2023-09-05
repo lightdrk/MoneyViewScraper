@@ -1,7 +1,3 @@
-# StockScraper
-Sure, here's a basic README for the code you provided:
-
----
 
 # TradingView Automation with Puppeteer
 
