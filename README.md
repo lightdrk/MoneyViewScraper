@@ -20,7 +20,7 @@ This Node.js script uses Puppeteer to automate actions on the TradingView websit
 3. Start the script:
 
    ```bash
-   node tradingview-automation.js
+   node newView.js
    ```
 
 ## Usage
